@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLIP Medical Image Captioning Results</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: #f8f8f8;
+            padding: 40px 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 2px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            border-bottom: 3px solid #000;
+            padding: 40px 60px 30px;
+        }
+        
+        h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            color: #666;
+            font-style: italic;
+            font-family: 'Georgia', serif;
+        }
+        
+        .content {
+            padding: 40px 60px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 25px 0;
+        }
+        
+        .metric-card {
+            border-left: 2px solid #000;
+            padding-left: 15px;
+        }
+        
+        .metric-label {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #000;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .metric-subtext {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 2px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95em;
+        }
+        
+        .data-table th {
+            background: #f5f5f5;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #000;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .data-table tr:hover {
+            background: #fafafa;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .quote-box {
+            background: #f9f9f9;
+            border-left: 3px solid #000;
+            padding: 20px 25px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #444;
+        }
+        
+        .list-clean {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .list-clean li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .list-clean li:before {
+            content: "▪";
+            margin-right: 10px;
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .performance-bars {
+            margin: 25px 0;
+        }
+        
+        .performance-item {
+            margin-bottom: 20px;
+        }
+        
+        .performance-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        .performance-bar {
+            height: 8px;
+            background: #e0e0e0;
+            position: relative;
+        }
+        
+        .performance-fill {
+            height: 100%;
+            background: #000;
+            transition: width 1s ease;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 25px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header, .content {
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BLIP Medical Image Captioning</h1>
+            <p class="subtitle">Comprehensive Results Analysis — Open-i Medical Dataset</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <div class="section-title">Executive Summary</div>
+                <p style="margin-bottom: 15px;">
+                    This study evaluates BLIP vision-language model fine-tuning on medical chest X-ray captioning using the Open-i dataset. 
+                    Training was conducted on 2,869 valid image-caption pairs using a Tesla T4 GPU with optimized memory management for 
+                    resource-constrained environments.
+                </p>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Average Semantic Similarity</div>
+                        <div class="metric-value">30.1%</div>
+                        <div class="metric-subtext">20 test samples</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Peak GPU Memory</div>
+                        <div class="metric-value">13.57 GB</div>
+                        <div class="metric-subtext">of 15.8 GB available</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Training Speed</div>
+                        <div class="metric-value">1.05</div>
+                        <div class="metric-subtext">iterations per second</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Loss Reduction</div>
+                        <div class="metric-value">70%</div>
+                        <div class="metric-subtext">first two epochs</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Dataset Configuration</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Samples</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Available</td>
+                            <td>3,851</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>Corrupted (Removed)</td>
+                            <td>131</td>
+                            <td>3.4%</td>
+                        </tr>
+                        <tr>
+                            <td>Valid Pairs</td>
+                            <td>2,869</td>
+                            <td>96.6%</td>
+                        </tr>
+                        <tr>
+                            <td>Training Set</td>
+                            <td>2,295</td>
+                            <td>80%</td>
+                        </tr>
+                        <tr>
+                            <td>Validation Set</td>
+                            <td>287</td>
+                            <td>10%</td>
+                        </tr>
+                        <tr>
+                            <td>Test Set</td>
+                            <td>287</td>
+                            <td>10%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Training Performance</div>
+                <div class="chart-container">
+                    <canvas id="lossChart"></canvas>
+                </div>
+                
+                <table class="data-table" style="margin-top: 30px;">
+                    <thead>
+                        <tr>
+                            <th>Epoch</th>
+                            <th>Training Loss</th>
+                            <th>Validation Loss</th>
+                            <th>Learning Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2.7542</td>
+                            <td>1.0782</td>
+                            <td>0.000050</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>0.8346</td>
+                            <td>0.8270</td>
+                            <td>0.000049</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>0.6263</td>
+                            <td>0.7324</td>
+                            <td>0.000045</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>0.5135</td>
+                            <td>0.7068</td>
+                            <td>0.000040</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Accuracy Distribution</div>
+                <div class="performance-bars">
+                    <div class="performance-item">
+                        <div class="performance-label">
+                            <span>High Accuracy (≥0.7 similarity)</span>
+                            <strong>0%</strong>
+                        </div>
+                        <div class="performance-bar">
+                            <div class="performance-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="performance-item">
+                        <div class="performance-label">
+                            <span>Medium Accuracy (0.4-0.7 similarity)</span>
+                            <strong>35%</strong>
+                        </div>
+                        <div class="performance-bar">
+                            <div class="performance-fill" style="width: 35%"></div>
+                        </div>
+                    </div>
+                    <div class="performance-item">
+                        <div class="performance-label">
+                            <span>Low Accuracy (<0.4 similarity)</span>
+                            <strong>65%</strong>
+                        </div>
+                        <div class="performance-bar">
+                            <div class="performance-fill" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Sample Generated Captions</div>
+                <div class="quote-box">
+                    Medical findings: normal. The heart is normal in size. The mediastinum is unremarkable. The lungs are clear.
+                </div>
+                <div class="quote-box">
+                    Medical findings: normal. The lungs are clear bilaterally. Specifically, no evidence of focal consolidation, 
+                    pneumothorax, or pleural effusion.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="two-column">
+                    <div>
+                        <div class="section-title">Key Strengths</div>
+                        <ul class="list-clean">
+                            <li>Successful adoption of medical terminology and standard reporting phrases</li>
+                            <li>Excellent identification of normal anatomical structures</li>
+                            <li>Consistent adherence to medical report format</li>
+                            <li>Efficient memory utilization within Colab constraints</li>
+                            <li>Clear learning progression with stable validation loss</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="section-title">Limitations</div>
+                        <ul class="list-clean">
+                            <li>Limited overall accuracy (30.1% semantic similarity)</li>
+                            <li>Tendency toward generic "normal" findings</li>
+                            <li>Weak detection of pathological conditions</li>
+                            <li>Limited semantic understanding of nuanced findings</li>
+                            <li>Performance ceiling at current dataset scale</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Recommendations</div>
+                <ul class="list-clean">
+                    <li>Extend training duration beyond 10 epochs with larger, more diverse medical datasets</li>
+                    <li>Implement data augmentation to increase pathological condition variety</li>
+                    <li>Conduct domain-specific pre-training on broader medical imaging datasets</li>
+                    <li>Develop medical-specific evaluation metrics beyond semantic similarity</li>
+                    <li>Focus training on underrepresented pathological cases to reduce normal-finding bias</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const ctx = document.getElementById('lossChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Epoch 1', 'Epoch 2', 'Epoch 3', 'Epoch 4'],
+                datasets: [{
+                    label: 'Training Loss',
+                    data: [2.7542, 0.8346, 0.6263, 0.5135],
+                    borderColor: '#000',
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                    tension: 0.1,
+                    fill: true,
+                    borderWidth: 2
+                }, {
+                    label: 'Validation Loss',
+                    data: [1.0782, 0.8270, 0.7324, 0.7068],
+                    borderColor: '#666',
+                    backgroundColor: 'rgba(102, 102, 102, 0.05)',
+                    tension: 0.1,
+                    fill: true,
+                    borderWidth: 2,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Arial',
+                                size: 12
+                            },
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Training and Validation Loss Progression',
+                        font: {
+                            size: 14,
+                            family: 'Georgia',
+                            weight: '600'
+                        },
+                        padding: {
+                            bottom: 20
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Loss',
+                            font: {
+                                family: 'Arial',
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
